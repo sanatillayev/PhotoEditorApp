@@ -12,7 +12,7 @@ This application allows users to register, sign in, and edit photos using variou
 ## Setup
 1. Clone the repository.
 2. Open the project in Xcode.
-4. Run the project on a simulator or device.
+3. Run the project on a simulator or device.
 
 ## Architecture
 - **MVVM**: The application follows the MVVM architecture.
@@ -21,6 +21,19 @@ This application allows users to register, sign in, and edit photos using variou
 - **Google SignIn SDK**: For Google authentication. 
 - **Core Image, PencilKit**: For image editing functionalities.
 
-<img width="666" alt="Screenshot 2024-12-13 at 18 50 50" src="https://github.com/user-attachments/assets/5ef4f957-984f-493a-8302-cb7714ca15f5" />
-<img width="870" alt="Screenshot 2024-12-13 at 18 50 38" src="https://github.com/user-attachments/assets/fcd4a591-9d92-45d6-b0a3-8bcd78eadd73" />
-<img width="886" alt="Screenshot 2024-12-13 at 18 50 18" src="https://github.com/user-attachments/assets/96755c91-1162-462d-b516-4130a39927bf" />
+## Screenshots
+
+### 1. Registration and Sign-In Screens
+The first image shows the registration flow for the app, including options for email and Google sign-in, along with pages for resetting the password and signing up with email.
+
+![Registration and Sign-In Screens](https://github.com/user-attachments/assets/d950d89d-6a18-44e7-9136-19ee085ad35a)
+
+### 2. Image Editor Page (Scale and Rotate)
+The second image displays the image editor page, where users can change the scale and rotation of an image. It also allows users to draw on the image and upload an image from their photo library or take a new photo using the camera.
+
+![Image Editor - Scale and Rotate](https://github.com/user-attachments/assets/b8eb8a20-5475-4081-8c26-9fd16c555121)
+
+### 3. Image Editor Page (Save and Export)
+The third image shows the final stage of image editing, where users can save the edited image to their photos after making changes like scaling, rotating, or drawing.
+
+![Image Editor - Save and Export](https://github.com/user-attachments/assets/b37757e9-ebfe-46a6-99da-3644f4cc3f7a)
