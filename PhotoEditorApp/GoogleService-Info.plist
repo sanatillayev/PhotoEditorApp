@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>369442553132-80ikm8m61140efmh192k1870v53rf32l.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.369442553132-80ikm8m61140efmh192k1870v53rf32l</string>
+	<key>API_KEY</key>
+	<string>AIzaSyColNgQcdCWzYgeFUSsQ5yuoreI03QtXrY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>369442553132</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.sanatillayev.PhotoEditorApp</string>
+	<key>PROJECT_ID</key>
+	<string>photoeditorapp-2587a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>photoeditorapp-2587a.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:369442553132:ios:37c2588117c83dcce4c089</string>
+</dict>
+</plist>
