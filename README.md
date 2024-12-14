@@ -37,3 +37,6 @@ The second image displays the image editor page, where users can change the scal
 The third image shows the final stage of image editing, where users can save the edited image to their photos after making changes like scaling, rotating, or drawing.
 
 ![Image Editor - Save and Export](https://github.com/user-attachments/assets/b37757e9-ebfe-46a6-99da-3644f4cc3f7a)
+
+### 4. Add text to image and change color, size
+<img width="574" alt="Screenshot 2024-12-14 at 12 05 54" src="https://github.com/user-attachments/assets/c944fed7-a99c-4b5e-bbe3-6e95773665c5" />
