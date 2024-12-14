@@ -14,6 +14,7 @@ import CoreImage.CIFilterBuiltins
 
 class ImageEditorViewModel: NSObject, ObservableObject {
     @Published var image: UIImage?
+    @Published var isLoading: Bool = false
     @Published var canvasView: PKCanvasView = PKCanvasView()
     @Published var error: String?
     
@@ -26,8 +27,6 @@ class ImageEditorViewModel: NSObject, ObservableObject {
 
     @Published var rotationAngle: Double = 0.0
     @Published var scale: CGFloat = 1.0
-
-
 
     private let context = CIContext()
     private var originalImage: UIImage?
@@ -75,34 +74,56 @@ class ImageEditorViewModel: NSObject, ObservableObject {
     }
     
     func saveTransformedImage() {
-        guard let image else { return }
-        let renderer = UIGraphicsImageRenderer(size: image.size)
+        isLoading = true
+        guard let baseImage = image else {
+            isLoading = false
+            return
+        }
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = baseImage.scale
+        let renderer = UIGraphicsImageRenderer(size: baseImage.size, format: format)
+        
         let transformedImage = renderer.image { context in
-            context.cgContext.translateBy(x: image.size.width / 2, y: image.size.height / 2)
-            context.cgContext.rotate(by: rotationAngle * .pi / 180)
-            context.cgContext.scaleBy(x: scale, y: scale)
-            context.cgContext.translateBy(x: -image.size.width / 2, y: -image.size.height / 2)
+            let cgContext = context.cgContext
             
-            image.draw(at: .zero)
-            let canvasDrawing = canvasView.drawing.image(from: canvasView.bounds, scale: image.scale)
-            canvasDrawing.draw(in: CGRect(origin: .zero, size: image.size))
+            cgContext.translateBy(x: baseImage.size.width / 2, y: baseImage.size.height / 2)
+            cgContext.rotate(by: rotationAngle * .pi / 180)
+            cgContext.scaleBy(x: scale, y: scale)
+            cgContext.translateBy(x: -baseImage.size.width / 2, y: -baseImage.size.height / 2)
+            
+            baseImage.draw(at: .zero)
+            
+            if isDrawingEnabled {
+                let canvasDrawing = canvasView.drawing.image(from: canvasView.bounds, scale: baseImage.scale)
+                canvasDrawing.draw(in: CGRect(origin: .zero, size: baseImage.size))
+            }
             if isWritingEnabled, !addedText.isEmpty {
+                let scaledTextPosition = CGPoint(
+                    x: textPosition.x + baseImage.size.width / 2,
+                    y: textPosition.y + baseImage.size.height / 2
+                )
+                
                 let textAttributes: [NSAttributedString.Key: Any] = [
-                    .font: UIFont.systemFont(ofSize: textSize),
+                    .font: UIFont.systemFont(ofSize: textSize * baseImage.size.width / canvasView.bounds.width),
                     .foregroundColor: UIColor(textColor)
                 ]
+                
                 let attributedString = NSAttributedString(string: addedText, attributes: textAttributes)
                 
+                let textSize = attributedString.size()
                 let textRect = CGRect(
-                    x: textPosition.x,
-                    y: textPosition.y,
-                    width: image.size.width,
-                    height: image.size.height
+                    origin: CGPoint(
+                        x: scaledTextPosition.x - textSize.width / 2,
+                        y: scaledTextPosition.y - textSize.height / 2
+                    ),
+                    size: textSize
                 )
                 attributedString.draw(in: textRect)
             }
         }
+        
         UIImageWriteToSavedPhotosAlbum(transformedImage, self, #selector(saveError), nil)
+        isLoading = false
     }
     
     func applyFilter(filterName: String) {

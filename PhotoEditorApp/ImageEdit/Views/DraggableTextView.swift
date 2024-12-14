@@ -18,7 +18,6 @@ struct DraggableTextView: View {
             .font(.system(size: fontSize))
             .foregroundColor(color)
             .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
 //            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
 //            .padding()
             .offset(x: position.x, y: position.y)

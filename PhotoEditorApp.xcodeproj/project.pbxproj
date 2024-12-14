@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0402BCAD2D0CB3AD00BF7FFB /* DraggableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0402BCAC2D0CB3AC00BF7FFB /* DraggableTextView.swift */; };
+		0402BCAF2D0D572800BF7FFB /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0402BCAE2D0D572800BF7FFB /* KeyboardResponder.swift */; };
 		0434E89E2C58B83500E98972 /* PhotoEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0434E89D2C58B83500E98972 /* PhotoEditorApp.swift */; };
 		0434E8A22C58B83700E98972 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0434E8A12C58B83700E98972 /* Assets.xcassets */; };
 		0434E8A52C58B83700E98972 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0434E8A42C58B83700E98972 /* Preview Assets.xcassets */; };
@@ -53,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		0402BCAC2D0CB3AC00BF7FFB /* DraggableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableTextView.swift; sourceTree = "<group>"; };
+		0402BCAE2D0D572800BF7FFB /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		0434E89A2C58B83500E98972 /* PhotoEditorApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoEditorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0434E89D2C58B83500E98972 /* PhotoEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoEditorApp.swift; sourceTree = "<group>"; };
 		0434E8A12C58B83700E98972 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				04EBD0F82C5CAC6500DE226E /* CoverModifier.swift */,
 				04EBD0FA2C5CAC6500DE226E /* NavigationModifier.swift */,
 				04EBD0F72C5CAC6500DE226E /* SheetModifier.swift */,
+				0402BCAE2D0D572800BF7FFB /* KeyboardResponder.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -409,6 +412,7 @@
 				04EBD1092C5CAE5A00DE226E /* AppStateManager.swift in Sources */,
 				04EBD1062C5CAE0700DE226E /* Modules.swift in Sources */,
 				04EBD1162C5CB1A700DE226E /* AuthManager.swift in Sources */,
+				0402BCAF2D0D572800BF7FFB /* KeyboardResponder.swift in Sources */,
 				0434E8EF2C58BEB500E98972 /* SignUpView.swift in Sources */,
 				04D1A7A22D0C418200160231 /* ResetPasswordViewModel.swift in Sources */,
 				04D1A7AA2D0C6FA900160231 /* SaveAreaMask.swift in Sources */,

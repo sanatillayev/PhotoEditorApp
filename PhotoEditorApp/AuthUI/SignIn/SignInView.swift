@@ -16,27 +16,38 @@ private enum Constants {
 struct SignInView: View {
     @StateObject var viewModel: AuthViewModel
     @StateObject var router: AuthRouter
+    @StateObject private var keyboardResponder = KeyboardResponder()
     
     var body: some View {
         VStack {
             Spacer()
-            FieldView(
-                title: "Email",
-                text: emailBinding,
-                placeholder: "Enter your email"
-            )
-            .autocapitalization(.none)
-            .keyboardType(.emailAddress)
             
-            SecureField("Password", text: passwordBinding)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-            
-            ActionButton(title: Constants.buttonTitle, isEnabled: isButtonEnabledBinding) {
-                viewModel.action.send(.loginWithEmail)
+            VStack {
+                FieldView(
+                    title: "Email",
+                    text: emailBinding,
+                    placeholder: "Enter your email"
+                )
+                .autocapitalization(.none)
+                .keyboardType(.emailAddress)
+                
+                SecureField("Password", text: passwordBinding)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+                
+                ActionButton(title: Constants.buttonTitle, isEnabled: isButtonEnabledBinding) {
+                    viewModel.action.send(.loginWithEmail)
+                }
+                .padding(.vertical)
             }
-            .padding(.vertical)
-
+            .padding(.all)
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(color: .gray.opacity(0.1), radius: 4, x: 0, y: 2)
+            .padding(.horizontal)
+            
+            Spacer()
+            
             VStack(spacing: 24) {
                 GoogleSignInButton(action: {
                     viewModel.action.send(.openGoogleForm)
@@ -54,7 +65,7 @@ struct SignInView: View {
                 .padding()
             }
         }
-        .navigationTitle("Sign In")
+        .navigationTitle(Constants.buttonTitle)
         .navigation(router)
         .sheet(router)
         .onAppear(perform: {
@@ -66,6 +77,7 @@ struct SignInView: View {
         })
         .background(ignoresSafeAreaEdges: .all)
         .background(content: { Color.txtSecondary })
+        .offset(y: keyboardResponder.currentHeight / 2)
     }
 }
 

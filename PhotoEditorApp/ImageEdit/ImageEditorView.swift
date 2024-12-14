@@ -25,7 +25,6 @@ struct ImageEditorView: View {
             .padding(.vertical, 40)
             .padding(.horizontal, 16)
         }
-        .scrollDisabled(viewModel.isDrawingEnabled)
         .sheet(isPresented: $showingImagePicker) {
             ImagePickerView(sourceType: .photoLibrary) { selectedImage in
                 viewModel.image = selectedImage
@@ -34,6 +33,7 @@ struct ImageEditorView: View {
         .alert(isPresented: $isAlertPresenting) {
             Alert(title: Text("Error"), message: Text(viewModel.error ?? ""))
         }
+        .progressView(isShowing: Binding(get: { viewModel.isLoading }, set: { viewModel.isLoading = $0 }))
     }
     
     private func imageView(for image: UIImage) -> some View {
@@ -44,26 +44,39 @@ struct ImageEditorView: View {
             .rotationEffect(.degrees(viewModel.rotationAngle))
             .overlay(
                 GeometryReader { geometry in
+                    let saveAreaSize = geometry.size
                     SaveAreaMask(
-                        size: geometry.size,
-                        saveRect: getSaveRectangle(for: geometry.size)
+                        size: saveAreaSize,
+                        saveRect: getSaveRectangle(for: saveAreaSize)
                     )
+                    .overlay {
+                        if viewModel.isWritingEnabled {
+                            DraggableTextView(
+                                text: Binding(
+                                    get: { viewModel.addedText },
+                                    set: { viewModel.addedText = $0 }
+                                ),
+                                position: Binding(
+                                    get: { constrainedPosition(for: viewModel.textPosition, in: saveAreaSize) },
+                                    set: { viewModel.textPosition = $0 }
+                                ),
+                                color: Binding(
+                                    get: { viewModel.textColor },
+                                    set: { viewModel.textColor = $0 }
+                                ),
+                                fontSize: Binding(
+                                    get: { viewModel.textSize },
+                                    set: { viewModel.textSize = $0 }
+                                )
+                            )
+                        }
+                    }
                 }
             )
             .overlay(
                 PKCanvasRepresentation(canvasView: viewModel.canvasView)
                     .opacity(viewModel.isDrawingEnabled ? 1.0 : 0.0)
             )
-            .overlay(content: {
-                if viewModel.isWritingEnabled {
-                    DraggableTextView(
-                        text: Binding(get: { viewModel.addedText }, set: { viewModel.addedText = $0 }),
-                        position: Binding(get: { viewModel.textPosition }, set: { viewModel.textPosition = $0 }),
-                        color: Binding(get: { viewModel.textColor }, set: { viewModel.textColor = $0 }),
-                        fontSize: Binding(get: { viewModel.textSize }, set: { viewModel.textSize = $0 })
-                    )
-                }
-            })
             .gesture(
                 MagnificationGesture()
                     .onChanged { value in
@@ -189,5 +202,15 @@ struct ImageEditorView: View {
         let x: CGFloat = (size.width - saveWidth) / 2
         let y: CGFloat = (size.height - saveHeight) / 2
         return CGRect(x: x, y: y, width: saveWidth, height: saveHeight)
+    }
+    
+    private func constrainedPosition(for position: CGPoint, in saveAreaSize: CGSize) -> CGPoint {
+        let maxX = saveAreaSize.width
+        let maxY = saveAreaSize.height
+        
+        return CGPoint(
+            x: min(max(position.x, 0), maxX),
+            y: min(max(position.y, 0), maxY)
+        )
     }
 }
