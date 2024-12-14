@@ -11,21 +11,21 @@ struct ImageEditorView: View {
     @StateObject var viewModel = ImageEditorViewModel()
     @State private var showingImagePicker = false
     @State private var isAlertPresenting = false
-    @State private var isDrawingEnabled = false
-    @State private var rotationAngle: Double = 0.0
-    @State private var scale: CGFloat = 1.0
     
     var body: some View {
-        VStack(spacing: 24) {
-            if let image = viewModel.image {
-                imageView(for: image)
-            } else {
-                imagePlaceholderView()
+        ScrollView {
+            VStack(spacing: 24) {
+                if let image = viewModel.image {
+                    imageView(for: image)
+                } else {
+                    imagePlaceholderView()
+                }
+                buttonsView()
             }
-            buttonsView()
+            .padding(.vertical, 40)
+            .padding(.horizontal, 16)
         }
-        .padding(.vertical, 40)
-        .padding(.horizontal, 16)
+        .scrollDisabled(viewModel.isDrawingEnabled)
         .sheet(isPresented: $showingImagePicker) {
             ImagePickerView(sourceType: .photoLibrary) { selectedImage in
                 viewModel.image = selectedImage
@@ -40,8 +40,8 @@ struct ImageEditorView: View {
         Image(uiImage: image)
             .resizable()
             .scaledToFit()
-            .scaleEffect(scale)
-            .rotationEffect(.degrees(rotationAngle))
+            .scaleEffect(viewModel.scale)
+            .rotationEffect(.degrees(viewModel.rotationAngle))
             .overlay(
                 GeometryReader { geometry in
                     SaveAreaMask(
@@ -52,18 +52,28 @@ struct ImageEditorView: View {
             )
             .overlay(
                 PKCanvasRepresentation(canvasView: viewModel.canvasView)
-                    .opacity(isDrawingEnabled ? 1.0 : 0.0)
+                    .opacity(viewModel.isDrawingEnabled ? 1.0 : 0.0)
             )
+            .overlay(content: {
+                if viewModel.isWritingEnabled {
+                    DraggableTextView(
+                        text: Binding(get: { viewModel.addedText }, set: { viewModel.addedText = $0 }),
+                        position: Binding(get: { viewModel.textPosition }, set: { viewModel.textPosition = $0 }),
+                        color: Binding(get: { viewModel.textColor }, set: { viewModel.textColor = $0 }),
+                        fontSize: Binding(get: { viewModel.textSize }, set: { viewModel.textSize = $0 })
+                    )
+                }
+            })
             .gesture(
                 MagnificationGesture()
                     .onChanged { value in
-                        scale = value
+                        viewModel.scale = value
                     }
             )
             .gesture(
                 RotationGesture()
                     .onChanged { value in
-                        rotationAngle = value.degrees
+                        viewModel.rotationAngle = value.degrees
                     }
             )
     }
@@ -93,9 +103,7 @@ struct ImageEditorView: View {
                 }
                 
                 Button(action: {
-                    if let image = viewModel.image {
-                        viewModel.saveTransformedImage(image: image, rotationAngle: rotationAngle, scale: scale, canvasView: viewModel.canvasView)
-                    }
+                    viewModel.saveTransformedImage()
                 }) {
                     Text("Save Image")
                 }
@@ -103,25 +111,76 @@ struct ImageEditorView: View {
             
             HStack(spacing: 16) {
                 Button(action: {
-                    scale = 1.0
-                    rotationAngle = 0.0
+                    viewModel.scale = 1.0
+                    viewModel.rotationAngle = 0.0
                 }) {
                     Text("Reset")
                 }
             }
-            
-            Slider(value: $rotationAngle, in: -180...180, step: 1) {
-                Text("Rotation (\(Int(rotationAngle))°)")
+            VStack {
+                Text("Rotation (\(Int(viewModel.rotationAngle))°)")
                     .foregroundStyle(.txtPrimary)
+                    .font(.caption)
+
+                Slider(value: Binding(get: { viewModel.rotationAngle }, set: { viewModel.rotationAngle = $0 }), in: -180...180, step: 1) {
+                    Text("Rotation (\(Int(viewModel.rotationAngle))°)")
+                        .foregroundStyle(.txtPrimary)
+                }
+            }
+            VStack {
+                Text("Scale (\(String(format: "%.1f", viewModel.scale))x)")
+                    .foregroundStyle(.txtPrimary)
+                    .font(.caption)
+                Slider(value: Binding(
+                    get: { viewModel.scale },
+                    set: { viewModel.scale = $0 }),
+                       in: 0.5...2.0, step: 0.1) {
+                    Text("Scale (\(String(format: "%.1f", viewModel.scale))x)")
+                }
             }
             
-            Slider(value: $scale, in: 0.5...2.0, step: 0.1) {
-                Text("Scale (\(String(format: "%.1f", scale))x)")
-            }
-            
-            Toggle("Enable Drawing", isOn: $isDrawingEnabled)
+            Toggle("Enable Drawing", isOn: Binding(get: { viewModel.isDrawingEnabled }, set: { viewModel.isDrawingEnabled = $0 }))
                 .padding()
+            
+            Toggle("Enable Writing", isOn: Binding(get: { viewModel.isWritingEnabled }, set: { viewModel.isWritingEnabled = $0 }))
+                .padding()
+            
+            textControlView()
+            
+            HStack(spacing: 16) {
+                Button("Apply Sepia") {
+                    viewModel.applyFilter(filterName: "CISepiaTone")
+                }
+                Button("Apply Blur") {
+                    viewModel.applyFilter(filterName: "CIGaussianBlur")
+                }
+                Button("Reset Image") {
+                    viewModel.resetImage()
+                }
+            }
         }
+    }
+    
+    private func textControlView() -> some View {
+        VStack {
+            if viewModel.isWritingEnabled {
+                TextField("Enter Text", text: Binding(get: { viewModel.addedText }, set: { viewModel.addedText = $0 }))
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                
+                HStack {
+                    Text("Font Size")
+                    Slider(value: Binding(get: { viewModel.textSize }, set: { viewModel.textSize = $0 }), in: 10...100)
+                }
+                
+                HStack {
+                    Text("Font Color")
+                    ColorPicker("", selection: Binding(get: { viewModel.textColor }, set: { viewModel.textColor = $0 }))
+                        .frame(width: 50)
+                }
+                
+            }
+        }
+        .padding()
     }
     
     private func getSaveRectangle(for size: CGSize) -> CGRect {

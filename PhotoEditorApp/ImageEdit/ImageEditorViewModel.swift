@@ -9,11 +9,28 @@ import SwiftUI
 import Combine
 import PencilKit
 import Photos
+import CoreImage
+import CoreImage.CIFilterBuiltins
 
 class ImageEditorViewModel: NSObject, ObservableObject {
     @Published var image: UIImage?
     @Published var canvasView: PKCanvasView = PKCanvasView()
     @Published var error: String?
+    
+    @Published var addedText = "Text"
+    @Published var textPosition: CGPoint = .zero
+    @Published var textColor: Color = .black
+    @Published var textSize: CGFloat = 20.0
+    @Published var isWritingEnabled = false
+    @Published var isDrawingEnabled = false
+
+    @Published var rotationAngle: Double = 0.0
+    @Published var scale: CGFloat = 1.0
+
+
+
+    private let context = CIContext()
+    private var originalImage: UIImage?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -36,7 +53,6 @@ class ImageEditorViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Image Handling
-    
     func loadImage(from sourceType: UIImagePickerController.SourceType) {
         DispatchQueue.main.async {
             let picker = UIImagePickerController()
@@ -50,34 +66,16 @@ class ImageEditorViewModel: NSObject, ObservableObject {
         }
     }
     
-    @objc func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+    @objc private func saveError(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
             self.error = error.localizedDescription
         } else {
-            // handle successful save
+            print("Save successful!")
         }
     }
     
-    func saveDrawing() {
-        let drawing = canvasView.drawing.image(from: canvasView.bounds, scale: 0)
-        if let markedupImage = saveImage(drawing: drawing){
-            UIImageWriteToSavedPhotosAlbum(markedupImage, self, #selector(saveError), nil)
-        }
-    }
-    
-    func saveImage(drawing : UIImage) -> UIImage? {
-        let bottomImage = image
-        let newImage = autoreleasepool { () -> UIImage in
-            UIGraphicsBeginImageContextWithOptions(canvasView.frame.size, false, 0.0)
-            bottomImage?.draw(in: CGRect(origin: CGPoint.zero, size: canvasView.frame.size))
-            drawing.draw(in: CGRect(origin: CGPoint.zero, size: canvasView.frame.size))
-            let createdImage = UIGraphicsGetImageFromCurrentImageContext()
-            return createdImage ?? .remove
-        }
-        return newImage
-    }
-    
-    func saveTransformedImage(image: UIImage, rotationAngle: CGFloat, scale: CGFloat, canvasView: PKCanvasView) {
+    func saveTransformedImage() {
+        guard let image else { return }
         let renderer = UIGraphicsImageRenderer(size: image.size)
         let transformedImage = renderer.image { context in
             context.cgContext.translateBy(x: image.size.width / 2, y: image.size.height / 2)
@@ -88,11 +86,43 @@ class ImageEditorViewModel: NSObject, ObservableObject {
             image.draw(at: .zero)
             let canvasDrawing = canvasView.drawing.image(from: canvasView.bounds, scale: image.scale)
             canvasDrawing.draw(in: CGRect(origin: .zero, size: image.size))
+            if isWritingEnabled, !addedText.isEmpty {
+                let textAttributes: [NSAttributedString.Key: Any] = [
+                    .font: UIFont.systemFont(ofSize: textSize),
+                    .foregroundColor: UIColor(textColor)
+                ]
+                let attributedString = NSAttributedString(string: addedText, attributes: textAttributes)
+                
+                let textRect = CGRect(
+                    x: textPosition.x,
+                    y: textPosition.y,
+                    width: image.size.width,
+                    height: image.size.height
+                )
+                attributedString.draw(in: textRect)
+            }
         }
-        
         UIImageWriteToSavedPhotosAlbum(transformedImage, self, #selector(saveError), nil)
     }
     
+    func applyFilter(filterName: String) {
+        guard let ciImage = CIImage(image: image ?? UIImage()) else { return }
+        guard let filter = CIFilter(name: filterName) else { return }
+        filter.setValue(ciImage, forKey: kCIInputImageKey)
+        
+        if let outputImage = filter.outputImage,
+           let cgImage = context.createCGImage(outputImage, from: outputImage.extent) {
+            image = UIImage(cgImage: cgImage)
+        }
+    }
+    
+    func resetImage() {
+        image = originalImage
+    }
+    
+    func saveOriginalImage() {
+        originalImage = image
+    }
 }
 
 extension ImageEditorViewModel: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

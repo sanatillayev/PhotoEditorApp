@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0402BCAD2D0CB3AD00BF7FFB /* DraggableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0402BCAC2D0CB3AC00BF7FFB /* DraggableTextView.swift */; };
 		0434E89E2C58B83500E98972 /* PhotoEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0434E89D2C58B83500E98972 /* PhotoEditorApp.swift */; };
 		0434E8A22C58B83700E98972 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0434E8A12C58B83700E98972 /* Assets.xcassets */; };
 		0434E8A52C58B83700E98972 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0434E8A42C58B83700E98972 /* Preview Assets.xcassets */; };
@@ -51,6 +52,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0402BCAC2D0CB3AC00BF7FFB /* DraggableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableTextView.swift; sourceTree = "<group>"; };
 		0434E89A2C58B83500E98972 /* PhotoEditorApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoEditorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0434E89D2C58B83500E98972 /* PhotoEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoEditorApp.swift; sourceTree = "<group>"; };
 		0434E8A12C58B83700E98972 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				04D1A7A52D0C6EDB00160231 /* PKCanvasRepresentation.swift */,
 				04D1A7A72D0C6F0100160231 /* ImagePickerView.swift */,
 				04D1A7A92D0C6FA900160231 /* SaveAreaMask.swift */,
+				0402BCAC2D0CB3AC00BF7FFB /* DraggableTextView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -421,6 +424,7 @@
 				04EBD0FC2C5CAC6500DE226E /* CoverModifier.swift in Sources */,
 				04EBD10E2C5CAF8F00DE226E /* AnyAuthStateManager.swift in Sources */,
 				04EBD0FE2C5CAC6500DE226E /* NavigationModifier.swift in Sources */,
+				0402BCAD2D0CB3AD00BF7FFB /* DraggableTextView.swift in Sources */,
 				04EBD12D2C5D774300DE226E /* AuthViewModel.swift in Sources */,
 				04EBD1362C5E124000DE226E /* ImageEditBuilder.swift in Sources */,
 				0434E8FF2C58C11900E98972 /* GoogleAuthHelper.swift in Sources */,
@@ -572,6 +576,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhotoEditorApp/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs acces to camera to take photos and edit them";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs access to your libray to save photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -604,6 +609,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PhotoEditorApp/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs acces to camera to take photos and edit them";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs access to your libray to save photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

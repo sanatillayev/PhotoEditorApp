@@ -19,6 +19,7 @@ struct SignInView: View {
     
     var body: some View {
         VStack {
+            Spacer()
             FieldView(
                 title: "Email",
                 text: emailBinding,
@@ -36,25 +37,22 @@ struct SignInView: View {
             }
             .padding(.vertical)
 
-            GoogleSignInButton(action: {
-                viewModel.action.send(.openGoogleForm)
-            })
-            .padding(.horizontal)
-            .padding(.vertical)
-
-            Text("Don't have an account? Sign Up")
-                .padding()
-                .onTapGesture {
-                    router.openSignUp()
-                }
-                .padding(.vertical)
-
-            Text("Forgot Password?")
-                .padding()
-                .onTapGesture {
+            VStack(spacing: 24) {
+                GoogleSignInButton(action: {
+                    viewModel.action.send(.openGoogleForm)
+                })
+                .padding(.horizontal)
+                
+                Text("Don't have an account? Sign Up")
+                    .padding()
+                    .onTapGesture {
+                        router.openSignUp()
+                    }
+                Button("Forgot Password?") {
                     router.presentPasswordRecovery()
                 }
-                .padding(.vertical)
+                .padding()
+            }
         }
         .navigationTitle("Sign In")
         .navigation(router)
